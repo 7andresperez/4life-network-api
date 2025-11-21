@@ -20,7 +20,7 @@ Este proyecto desarrolla una API REST acompañada de una interfaz web interactiv
 ## Estructura del Proyecto
 
 ```
-4life-network-api/
+sergio/
 ├── backend/          # API REST con Node.js y Express
 ├── frontend/         # Aplicación React.js
 ├── database/         # Scripts SQL para PostgreSQL
