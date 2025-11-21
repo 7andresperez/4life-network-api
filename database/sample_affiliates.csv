@@ -1,0 +1,14 @@
+Código,Nombre,Email,Teléfono,Rango,Puntos,Código Padre
+A001,Juan Pérez,juan.perez@example.com,3001234567,Platino,35000,
+A002,María González,maria.gonzalez@example.com,3002345678,Oro,20000,A001
+A003,Carlos Rodríguez,carlos.rodriguez@example.com,3003456789,Oro,18000,A001
+A004,Ana Martínez,ana.martinez@example.com,3004567890,Oro,15000,A001
+A005,Luis Sánchez,luis.sanchez@example.com,3005678901,Plata,8000,A002
+A006,Patricia López,patricia.lopez@example.com,3006789012,Plata,7500,A002
+A007,Roberto Torres,roberto.torres@example.com,3007890123,Bronce,3000,A003
+A008,Laura Ramírez,laura.ramirez@example.com,3008901234,Bronce,2500,A003
+A009,Diego Morales,diego.morales@example.com,3009012345,Bronce,2000,A004
+A010,Sofía Herrera,sofia.herrera@example.com,3010123456,Distribuidor,800,A005
+A011,Andrés Castro,andres.castro@example.com,3011234567,Distribuidor,600,A005
+A012,Carmen Vargas,carmen.vargas@example.com,3012345678,Distribuidor,500,A006
+

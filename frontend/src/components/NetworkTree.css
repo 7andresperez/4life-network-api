@@ -1,0 +1,30 @@
+.network-tree-container {
+  width: 100%;
+  overflow: auto;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.network-tree-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 8px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tooltip strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
