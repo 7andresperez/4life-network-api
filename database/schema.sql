@@ -45,7 +45,9 @@ CREATE TRIGGER update_affiliates_updated_at BEFORE UPDATE ON affiliates
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Vista materializada para consultas jerárquicas optimizadas
-CREATE MATERIALIZED VIEW IF NOT EXISTS affiliate_hierarchy AS
+DROP MATERIALIZED VIEW IF EXISTS affiliate_hierarchy;
+
+CREATE MATERIALIZED VIEW affiliate_hierarchy AS
 WITH RECURSIVE hierarchy AS (
     -- Nodos raíz (sin padre)
     SELECT 
@@ -57,7 +59,7 @@ WITH RECURSIVE hierarchy AS (
         parent_id,
         0 as level,
         ARRAY[id] as path,
-        name as full_path
+        CAST(name AS TEXT) as full_path
     FROM affiliates
     WHERE parent_id IS NULL
     
@@ -73,7 +75,7 @@ WITH RECURSIVE hierarchy AS (
         a.parent_id,
         h.level + 1,
         h.path || a.id,
-        h.full_path || ' > ' || a.name
+        CAST(h.full_path || ' > ' || a.name AS TEXT)
     FROM affiliates a
     INNER JOIN hierarchy h ON a.parent_id = h.id
     WHERE h.level < 10  -- Limitar profundidad para evitar loops infinitos
@@ -88,7 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_hierarchy_level ON affiliate_hierarchy(level);
 CREATE OR REPLACE FUNCTION refresh_affiliate_hierarchy()
 RETURNS void AS $$
 BEGIN
-    REFRESH MATERIALIZED VIEW CONCURRENTLY affiliate_hierarchy;
+    REFRESH MATERIALIZED VIEW affiliate_hierarchy;
 END;
 $$ LANGUAGE plpgsql;
 
