@@ -14,43 +14,69 @@ const NetworkTree = ({ data }) => {
     d3.select('body').selectAll('.tooltip').remove();
 
     const width = containerRef.current.clientWidth || 1200;
-    const height = Math.max(600, data.length * 150);
+    const baseHeight = 600;
 
     const svg = d3.select(svgRef.current)
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', baseHeight);
 
-    // Convertir array plano a estructura de árbol
-    const dataMap = new Map();
-    let rootNode = null;
+    let root;
+    
+    // Verificar si el primer elemento ya tiene estructura de árbol (con children)
+    const firstElement = data[0];
+    if (firstElement && firstElement.children && Array.isArray(firstElement.children)) {
+      // Los datos ya vienen estructurados como árbol
+      // Función auxiliar para limpiar children inválidos y construir recursivamente
+      const cleanTree = (node) => {
+        const cleaned = { ...node };
+        if (Array.isArray(node.children) && node.children.length > 0) {
+          cleaned.children = node.children
+            .filter(child => child && typeof child === 'object')
+            .map(cleanTree);
+        } else {
+          cleaned.children = [];
+        }
+        return cleaned;
+      };
+      
+      root = d3.hierarchy(cleanTree(firstElement), d => Array.isArray(d.children) ? d.children : []);
+    } else {
+      // Convertir array plano a estructura de árbol
+      const dataMap = new Map();
+      let rootNode = null;
 
-    // Primero, crear mapa de todos los nodos
-    data.forEach(node => {
-      dataMap.set(node.id, { ...node, children: [] });
-      if (!node.parent_id) {
-        rootNode = node;
+      // Primero, crear mapa de todos los nodos
+      data.forEach(node => {
+        dataMap.set(node.id, { ...node, children: [] });
+        if (!node.parent_id) {
+          rootNode = node;
+        }
+      });
+
+      // Construir árbol
+      dataMap.forEach((node, id) => {
+        if (node.parent_id && dataMap.has(node.parent_id)) {
+          const parent = dataMap.get(node.parent_id);
+          parent.children.push(node);
+        }
+      });
+
+      // Si no hay rootNode, usar el primer elemento
+      if (!rootNode && data.length > 0) {
+        rootNode = data[0];
       }
-    });
 
-    // Construir árbol
-    dataMap.forEach((node, id) => {
-      if (node.parent_id && dataMap.has(node.parent_id)) {
-        const parent = dataMap.get(node.parent_id);
-        parent.children.push(node);
-      }
-    });
+      if (!rootNode) return;
 
-    // Si no hay rootNode, usar el primer elemento
-    if (!rootNode && data.length > 0) {
-      rootNode = data[0];
+      root = d3.hierarchy(dataMap.get(rootNode.id) || rootNode, d => d.children);
     }
-
-    if (!rootNode) return;
-
-    const root = d3.hierarchy(dataMap.get(rootNode.id) || rootNode, d => d.children);
-    const treeLayout = d3.tree().size([height - 100, width - 200]);
+    const treeLayout = d3.tree().size([baseHeight - 100, width - 200]);
 
     treeLayout(root);
+    
+    // Actualizar altura del SVG basada en el árbol real
+    const actualHeight = Math.max(600, root.descendants().length * 100);
+    svg.attr('height', actualHeight);
 
     // Agregar links
     const links = svg.selectAll('.link')

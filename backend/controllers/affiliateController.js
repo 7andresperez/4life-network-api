@@ -232,20 +232,21 @@ exports.getRanks = async (req, res) => {
   }
 };
 
-// Función auxiliar para construir árbol
+// Función auxiliar para construir árbol recursivamente
 function buildTree(hierarchy) {
   const map = new Map();
   const roots = [];
   
-  // Crear mapa de nodos
+  // Crear mapa de nodos (solo con propiedades sin children)
   hierarchy.forEach(node => {
-    map.set(node.id, { ...node, children: [] });
+    const { children, ...nodeData } = node;
+    map.set(node.id, { ...nodeData, children: [] });
   });
   
   // Construir árbol
   hierarchy.forEach(node => {
     const nodeWithChildren = map.get(node.id);
-    if (node.parent_id === null) {
+    if (node.parent_id === null || node.level === 0) {
       roots.push(nodeWithChildren);
     } else {
       const parent = map.get(node.parent_id);

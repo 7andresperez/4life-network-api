@@ -124,8 +124,16 @@ const NetworkView = () => {
       </div>
 
       <div className="network-container">
-        {hierarchy && hierarchy.tree && (
+        {hierarchy && hierarchy.hierarchy && hierarchy.hierarchy.length > 0 && (
+          <NetworkTree data={hierarchy.hierarchy} />
+        )}
+        {hierarchy && (!hierarchy.hierarchy || hierarchy.hierarchy.length === 0) && hierarchy.tree && hierarchy.tree.length > 0 && (
           <NetworkTree data={hierarchy.tree} />
+        )}
+        {hierarchy && (!hierarchy.hierarchy || hierarchy.hierarchy.length === 0) && (!hierarchy.tree || hierarchy.tree.length === 0) && (
+          <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+            No hay datos de red para visualizar
+          </div>
         )}
       </div>
     </div>
